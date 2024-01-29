@@ -58,20 +58,21 @@ void Application::Init(void){
 	blue_button = Button("../res/images/blue.png", 245, 0);
 	cyan_button = Button("../res/images/cyan.png", 280, 0);
 
-	my_mesh = new Mesh();
+	my_mesh = new Mesh(); // instantiate and assign a model matrix
 	if (!my_mesh->LoadOBJ("meshes/lee.obj"))
 		std::cout << "Model not found" << std::endl;
 
-	my_model.Rotate(3.14, Vector3(1, 0, 0)); //totate 180 degrees in the x axis //given an angle (radians) and an axis it rotates an object
-	my_model.Translate(1.0,2.0,0.0); //x,y,z- where we want our object to be
+	//my_model.Rotate(3.14, Vector3(1, 0, 0)); //totate 180 degrees in the x axis //given an angle (radians) and an axis it rotates an object
+	//my_model.Translate(1.0,2.0,0.0); //x,y,z- where we want our object to be
 
 
-	my_entity.model = my_model;
+	//assigning a model matrix and mesh to entity
+    my_entity.model = my_model;
 	my_entity.mesh = my_mesh;
 
 	my_camera = new Camera();
-	my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
-	my_camera->SetPerspective(60, window_width / (float)window_height, 0.01, 100); //60 degrees, aspect ratio, near and far plane
+	//my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
+	//my_camera->SetPerspective(60, window_width / (float)window_height, 0.01, 100); //60 degrees, aspect ratio, near and far plane
 
 	
 }
@@ -150,6 +151,10 @@ void Application::Render(void){
 
 			particleSystem.Render(&framebuffer); 
 			break;
+            
+        case DRAW_ENTITY:
+            my_entity.Render(&framebuffer, my_camera, Color::RED);
+            break;
 
 	}
 
@@ -180,6 +185,7 @@ void Application::Update(float seconds_elapsed)
 void Application::OnKeyPressed( SDL_KeyboardEvent event )
 
 {
+
 
 	// KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 
@@ -244,6 +250,10 @@ void Application::OnKeyPressed( SDL_KeyboardEvent event )
 			drawingMode = DRAW_ANIMATION;
 			particleSystem.Init();
 			break;
+            
+        case SDLK_7:
+            drawingMode = DRAW_ENTITY;
+            break;
            
 		case SDLK_PLUS:
 			borderWidth++; 

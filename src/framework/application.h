@@ -35,19 +35,13 @@ public:
 	enum DrawingMode {
 
 		DRAW_NONE,   // No drawing
-
 		DRAW_LINES,
-
 		DRAW_RECTANGLES,
-
 		DRAW_CIRCLES,
-
 		DRAW_TRIANGLES,
-
 		DRAW_PAINT,
-
-		DRAW_ANIMATION
-
+		DRAW_ANIMATION,
+        DRAW_ENTITY
 	};
 
 	DrawingMode drawingMode;  // Current drawing mode

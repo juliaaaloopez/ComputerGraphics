@@ -2,7 +2,7 @@
 
 
 #include "mesh.h"
-
+#include "image.h"
 
 class Entity {
 
@@ -13,6 +13,8 @@ public:
 
 	Entity() {};
 	~Entity() {};
+    
+    void Render(Image* framebuffer, Camera* camera, const Color& c);
 
 
 };
