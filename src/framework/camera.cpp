@@ -87,17 +87,45 @@ void Camera::UpdateViewMatrix()
 	view_matrix.SetIdentity();
 
 	// Comment this line to create your own projection matrix!
-	SetExampleViewMatrix(); //automatically constructs view matrix
+	//SetExampleViewMatrix(); //automatically constructs view matrix
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	// Careful with the order of matrix multiplications, and be sure to use normalized vectors!
 	
 	// Create the view matrix rotation
-	// ...
-	// view_matrix.M[3][3] = 1.0;
+    Vector3 forward = center-eye;
+    Vector3 side = forward.Cross(up);
+    Vector3 top = side.Cross(forward);
+    
+    forward.Normalize();
+    side.Normalize();
+    top.Normalize(); //ask if we need to normalize since it is the cross product of two already normalized vectors
+    //We do not have to put the 0's and 1's since the matrix is originally set to be the identity matrix
+    
+    view_matrix.M[0][0] = side.x;
+    view_matrix.M[1][0] = side.y;
+    view_matrix.M[2][0] = side.z;
+    //view_matrix.M[3][0] = 0;
+    
+    view_matrix.M[0][1] = top.x;
+    view_matrix.M[1][1] = top.y;
+    view_matrix.M[2][1] = top.z;
+    //view_matrix.M[3][1] = 0;
+    
+    view_matrix.M[0][2] = (-1)*forward.x;
+    view_matrix.M[1][2] = (-1)*forward.y;
+    view_matrix.M[2][2] = (-1)*forward.z;
+    //view_matrix.M[3][2] = 0;
+    
+    /*view_matrix.M[0][3] = 0;
+    view_matrix.M[1][3] = 0;
+    view_matrix.M[2][3] = 0;
+    view_matrix.M[3][3] = 1;*/
+    
+    // view_matrix.M[3][3] = 1.0;
 
 	// Translate view matrix
-	// ...
+    view_matrix.TranslateLocal(-eye.x, -eye.y, -eye.z);
 
 	UpdateViewProjectionMatrix();
 }
@@ -109,17 +137,31 @@ void Camera::UpdateProjectionMatrix()
 	projection_matrix.SetIdentity();
 
 	// Comment this line to create your own projection matrix!
-	SetExampleProjectionMatrix();
+	//SetExampleProjectionMatrix();
 
 	// Remember how to fill a Matrix4x4 (check framework slides)
 	
 	if (type == PERSPECTIVE) {
 		// projection_matrix.M[2][3] = -1;
+        float f = 1/tan((fov*DEG2RAD)/2); //we need the view angle (fov) in radians so we multiply by the constant DEG2RAD
+        
+        projection_matrix.M[0][0] = f/aspect;
+        projection_matrix.M[1][1] = f;
+        projection_matrix.M[2][2] = (far_plane + near_plane)/(near_plane - far_plane);
+        projection_matrix.M[3][2] = 2*((far_plane*near_plane) / (near_plane-far_plane));
+        projection_matrix.M[2][3] = -1;
+        
 		// ...
 	}
 	else if (type == ORTHOGRAPHIC) {
 		// ...
-	} 
+        projection_matrix.M[0][0] = (2 /  (right - left));
+        projection_matrix.M[1][1] = (2 /  (top - bottom));
+        projection_matrix.M[2][2] = ((-1)*2 /  (far_plane - near_plane));
+        projection_matrix.M[0][3] = (-1)*((right + left)/(right - left));
+        projection_matrix.M[1][3] = (-1)*((top + bottom)/(top - bottom));
+        projection_matrix.M[2][3] = (-1)*((far_plane + near_plane)/(far_plane - near_plane));
+	}
 
 	UpdateViewProjectionMatrix();
 }

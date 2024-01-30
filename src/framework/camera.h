@@ -11,9 +11,9 @@ class Camera
 {
 	// OpenGL methods to fill matrices
 	// Only to test Draw3DEntity
-	void SetExampleViewMatrix();
+    void SetExampleViewMatrix();
 	void SetExampleProjectionMatrix();
-
+    
 public:
 
 	// Types of cameras available
