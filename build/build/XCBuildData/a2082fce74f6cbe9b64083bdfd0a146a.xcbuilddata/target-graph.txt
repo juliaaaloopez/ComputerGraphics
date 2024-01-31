@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'SDL2-static' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'sdl_headers_copy' in project 'ComputerGraphics'
+Target 'sdl_headers_copy' in project 'ComputerGraphics' (no dependencies)

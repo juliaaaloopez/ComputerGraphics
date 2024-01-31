@@ -1,0 +1,32 @@
+dependencies: \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/SDL_coreaudio.m \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../SDL_internal.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../dynapi/SDL_dynapi.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../dynapi/SDL_dynapi_overrides.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include-config-debug/SDL_config.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_platform.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/begin_code.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/close_code.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_assert.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_stdinc.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_log.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_audio.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_error.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_endian.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_mutex.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_thread.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_atomic.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_rwops.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/build/libraries/sdl2/include/SDL_hints.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../SDL_audio_c.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../SDL_sysaudio.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../SDL_dataqueue.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/.././SDL_audio_c.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/SDL_coreaudio.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/SDL_systhread.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/../SDL_internal.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/SDL_thread_c.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/pthread/SDL_systhread_c.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/pthread/../../SDL_internal.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../../thread/../SDL_error_c.h \
+  /Users/julialopezpinot/Desktop/ComputerGraphics/libraries/sdl2/src/audio/coreaudio/../.././SDL_internal.h

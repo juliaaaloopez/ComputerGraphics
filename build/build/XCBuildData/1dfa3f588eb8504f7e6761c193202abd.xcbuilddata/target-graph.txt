@@ -1,0 +1,24 @@
+Target dependency graph (12 targets)
+Target 'uninstall' in project 'ComputerGraphics' (no dependencies)
+Target 'libglew_shared' in project 'ComputerGraphics' (no dependencies)
+Target 'install' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'ALL_BUILD' in project 'ComputerGraphics'
+Target 'SDL2_test' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'sdl_headers_copy' in project 'ComputerGraphics'
+Target 'SDL2-static' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'sdl_headers_copy' in project 'ComputerGraphics'
+Target 'ALL_BUILD' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'ComputerGraphics' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'ZERO_CHECK' in project 'ComputerGraphics'
+Target 'ComputerGraphics' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'SDL2main' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'SDL2' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'libglew_static' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'ZERO_CHECK' in project 'ComputerGraphics'
+Target 'ZERO_CHECK' in project 'ComputerGraphics' (no dependencies)
+Target 'libglew_static' in project 'ComputerGraphics' (no dependencies)
+Target 'SDL2' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'sdl_headers_copy' in project 'ComputerGraphics'
+Target 'SDL2main' in project 'ComputerGraphics'
+➜ Explicit dependency on target 'sdl_headers_copy' in project 'ComputerGraphics'
+Target 'sdl_headers_copy' in project 'ComputerGraphics' (no dependencies)
