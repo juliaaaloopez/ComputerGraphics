@@ -209,7 +209,7 @@ void Application::Update(float seconds_elapsed)
         case DRAW_MULTIPLE_ANIMATED:
 
                 entity1.Update(seconds_elapsed, true, false, false); //rotate
-                entity2.Update(seconds_elapsed, false, true, false); //translate
+                //entity2.Update(seconds_elapsed, false, true, false); //translate
                 entity3.Update(seconds_elapsed, false, false, true); //scale
             
             break;

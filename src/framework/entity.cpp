@@ -49,22 +49,15 @@ void Entity::Update(float seconds_elapsed, bool rotate, bool translate, bool sca
 
         
     }else if (scale) {
-        float scaleFrequency = 1.0f;
-        float scaleAmplitude = 0.2f;
-        float targetScaleX = 2.0f;  // Target scale along X axis
-        float targetScaleY = 1.5f;  // Target scale along Y axis
-        float targetScaleZ = 1.8f;  // Target scale along Z axis
-
         // Calculate scaling factors based on sine function
-        float scale_factor = 1.0f + scaleAmplitude * sin(scaleFrequency * seconds_elapsed);
         Matrix44 scale;
         scale.SetIdentity();
-        scale.M[0][0] = scale_factor;
-        scale.M[1][1] = scale_factor;
-        scale.M[2][2] = scale_factor;
+        scale.M[0][0] = 0.9f;
+        scale.M[1][1] = 0.8f;
+        scale.M[2][2] = 0.7f;
         model = scale * model;
 
-        // If the target scale is reached, start smoothly rescaling back to the original size
+        /*// If the target scale is reached, start smoothly rescaling back to the original size
         if (model.M[0][0] > targetScaleX || model.M[1][1] > targetScaleY || model.M[2][2] > targetScaleZ) {
             float rescale_speed = 0.5f;  // Adjust this value for the rescaling speed
 
@@ -77,7 +70,7 @@ void Entity::Update(float seconds_elapsed, bool rotate, bool translate, bool sca
             rescale.M[1][1] = - rescale_factor;
             rescale.M[2][2] = - rescale_factor;
             model = rescale * model;
-        }
+        }*/
     }
 
 }
