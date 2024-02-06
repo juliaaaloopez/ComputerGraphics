@@ -48,10 +48,13 @@ public:
 
     Color lineColor;
     Color lineColor2;
+    Color color1;
+    Color color2;
+    Color color3; 
 
-    Vector2 point0;
-    Vector2 point1;
-    Vector2 point2;
+    Vector3 point0;
+    Vector3 point1;
+    Vector3 point2;
 
     Color GetSelectedColor();
 
@@ -100,21 +103,33 @@ public:
 
     DrawingMode2 drawingMode2;
 
-    
-
-    Entity my_entity;
-
     Camera* my_camera;
-
-
     //ex 3.4
     Entity entity1;
     Entity entity2;
     Entity entity3;
 
+    enum Current_property {
+        FAR_PLANE,
+        NEAR_PLANE,
+        FOV
+    };
+    Current_property current_property;
+
+    //LAB 3
+
+    enum DrawingMode3 {
+        DRAW_NO,
+        PLAIN_INTERPOLATED_COLOR,
+        OCCLUSIONS_NO_OCCLUSIONS,
+        MESH_TEXT_PLAIN_COL,
+        DRAW_TRIANGLE_INTERPOLATED
+
+    };
+    DrawingMode3 drawingMode3;
+
 
     // Input
-
     const Uint8* keystate;
     int mouse_state; // Tells which buttons are pressed
     Vector2 mouse_position; // Last mouse position

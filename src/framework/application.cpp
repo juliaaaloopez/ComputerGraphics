@@ -38,7 +38,10 @@ void Application::Init(void) {
 
     //LAB 2
     drawingMode2 = DRAW_NOTHING;
-    bool Lab2 = true;
+    bool Lab2 = false;
+
+    //LAB 3
+    bool Lab3 = true;
 
     if (Lab1) {
         std::cout << "Available Drawing Options:" << std::endl;
@@ -69,37 +72,40 @@ void Application::Init(void) {
     }
 
     if (Lab2) {
-
-        
-        
-        if (!my_entity.mesh->LoadOBJ("meshes/lee.obj"))
-            std::cout << "Model not found" << std::endl;
-
-        //my_model.Rotate(3.14, Vector3(1, 0, 0)); //totate 180 degrees in the x axis //given an angle (radians) and an axis it rotates an object
-        //my_model.Translate(1.0,2.0,0.0); //x,y,z- where we want our object to be
-       
         my_camera = new Camera();
-        //my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
-        //my_camera->SetPerspective(60, window_width / (float)window_height, 0.01, 100); //60 degrees, aspect ratio, near and far plane
+        my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
+        my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
 
-        //3.4
         //define 3 new entities
-
-        //initialize entity 1 mesh
        
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
+        entity1.model.Translate(0, 0.3, 0);
+        entity1.model.Rotate(0, (0, 0, 0));
+        Matrix44 m_scale1;
+        entity1.model = m_scale1 * entity1.model;
 
         if (!entity2.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
+        entity2.model.Translate(0.5, -0.3, 0);
+        entity2.model.Rotate(0, (0, 0, 0));
+        Matrix44 m_scale2;
+        entity2.model = m_scale2 * entity2.model;
 
         if (!entity3.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
-    
-        entity1.model.SetTranslation(0.0, 0.3, 0.0);
-        entity2.model.SetTranslation(0.5, -0.3, 0.0);
-        entity3.model.SetTranslation(-0.5, -0.3, 0.0);
-
+        entity3.model.Translate(-0.5, -0.3, 0);
+        entity3.model.Rotate(0, (0, 0, 0));
+        Matrix44 m_scale3;
+        entity3.model = m_scale3 * entity3.model;
+    }
+    if (Lab3) {
+        my_camera = new Camera();
+        my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
+        my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
+        
+        if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
+            std::cout << "Model not found" << std::endl;
     }
 }
 
@@ -111,7 +117,8 @@ void Application::Render(void) {
     framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
 
     bool Lab1 = false;
-    bool Lab2 = true;
+    bool Lab2 = false;
+    bool Lab3 = true;
 
     if (Lab1) {
         switch (drawingMode) {
@@ -139,10 +146,10 @@ void Application::Render(void) {
 
         case DRAW_TRIANGLES:
             if (isFilled) {
-                framebuffer.DrawTriangle(point0, point1, point2, lineColor, 1, lineColor2);
+                //framebuffer.DrawTriangle(point0, point1, point2, lineColor, 1, lineColor2);
             }
             else {
-                framebuffer.DrawTriangle(point0, point1, point2, lineColor, 0, lineColor2);
+                //framebuffer.DrawTriangle(point0, point1, point2, lineColor, 0, lineColor2);
             }
             break;
 
@@ -168,17 +175,36 @@ void Application::Render(void) {
     if (Lab2) {
         switch (drawingMode2) {
         case DRAW_SINGLE_ENTITY:
-            my_entity.Render(&framebuffer, my_camera, Color::RED);
+            entity1.Render(&framebuffer, my_camera, Color::RED);
             break;
 
         case DRAW_MULTIPLE_ANIMATED:
             entity1.Render(&framebuffer, my_camera, Color::RED);
             entity2.Render(&framebuffer, my_camera, Color::GREEN);
             entity3.Render(&framebuffer, my_camera, Color::WHITE);
-
             break;
 
         }
+
+    }
+    if (Lab3) {
+        switch (drawingMode3) {
+        case PLAIN_INTERPOLATED_COLOR:
+                entity1.Render(&framebuffer, my_camera, Color::GREEN);
+            break;
+
+        case OCCLUSIONS_NO_OCCLUSIONS:
+            break;
+
+        case MESH_TEXT_PLAIN_COL:
+            break;
+                
+        case DRAW_TRIANGLE_INTERPOLATED:
+                framebuffer.DrawTriangleInterpolated({200, 200, 1}, {400, 400, 1}, {600, 200, 1}, color1, color2, color3);
+            break;
+                
+        }
+
 
     }
 
@@ -193,7 +219,9 @@ void Application::Render(void) {
 void Application::Update(float seconds_elapsed)
 {
     bool Lab1 = false;
-    bool Lab2 = true;
+    bool Lab2 = false;
+    bool Lab3 = true;
+
     if (Lab1) {
         switch (drawingMode) {
         case DRAW_ANIMATION:
@@ -202,19 +230,25 @@ void Application::Update(float seconds_elapsed)
         }
 
     }
-   
+
     if (Lab2) {
 
         switch (drawingMode2) {
         case DRAW_MULTIPLE_ANIMATED:
 
-                entity1.Update(seconds_elapsed, true, false, false); //rotate
-                //entity2.Update(seconds_elapsed, false, true, false); //translate
-                entity3.Update(seconds_elapsed, false, false, true); //scale
-            
+            entity1.Update(seconds_elapsed, true, false, false); //rotate
+            entity2.Update(seconds_elapsed, false, true, false); //translate
+            entity3.Update(seconds_elapsed, false, false, true); //scale
+
             break;
         }
 
+    }
+    if (Lab3) {
+
+        switch (drawingMode3) {
+
+        }
     }
 
 }
@@ -225,7 +259,8 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
 {
     bool Lab1 = false;
-    bool Lab2 = true;
+    bool Lab2 = false;
+    bool Lab3 = true;
 
     // KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 
@@ -263,11 +298,11 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         case SDLK_4:
             drawingMode = DRAW_TRIANGLES;
-            point0 = { mouse_position.x, mouse_position.y };
-            point1 = { mouse_position.x + 50, mouse_position.y + 70 };
-            point2 = { mouse_position.x + 100, mouse_position.y + 10 };
-            lineColor = Color(rand() % 256, rand() % 256, rand() % 256);
-            lineColor2 = Color(rand() % 256, rand() % 256, rand() % 256);
+            //point0 = { mouse_position.x, mouse_position.y };
+            //point1 = { mouse_position.x + 50, mouse_position.y + 70 };
+            //point2 = { mouse_position.x + 100, mouse_position.y + 10 };
+            //lineColor = Color(rand() % 256, rand() % 256, rand() % 256);
+            //lineColor2 = Color(rand() % 256, rand() % 256, rand() % 256);
             break;
 
         case SDLK_5:
@@ -303,27 +338,81 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         case SDLK_2:
             drawingMode2 = DRAW_MULTIPLE_ANIMATED;
-
-
             break;
 
         case SDLK_o:
+            my_camera->type = Camera::ORTHOGRAPHIC;
+            my_camera->SetOrthographic(my_camera->left, my_camera->right,my_camera->top,my_camera->bottom,my_camera->near_plane,my_camera->far_plane);
             break;
 
         case SDLK_p:
+            my_camera->type = Camera::PERSPECTIVE;
+            my_camera-> SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             break;
 
         case SDLK_n:
+            current_property = NEAR_PLANE;
             break;
 
         case SDLK_f:
+            current_property = FAR_PLANE;
+            break;
+
+        case SDLK_v:
+            current_property = FOV;
             break;
 
         case SDLK_PLUS:
+            if (current_property == NEAR_PLANE) {
+                my_camera->near_plane= my_camera->near_plane+10;
+                my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
+            }
+            else if (current_property == FAR_PLANE) {
+                my_camera->far_plane = my_camera->far_plane+10;
+                my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
+            }
             break;
 
         case SDLK_MINUS:
+            if (current_property == NEAR_PLANE) {
+                my_camera->near_plane = my_camera->near_plane-10;
+                my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
+            }
+            else if (current_property == FAR_PLANE) {
+                my_camera->far_plane = my_camera->far_plane-10;
+                my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
+            }
             break;
+        }
+
+    }
+
+    if (Lab3) {
+        switch (event.keysym.sym) {
+            case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+
+            case SDLK_c:
+                drawingMode3 = PLAIN_INTERPOLATED_COLOR;
+                break;
+
+            case SDLK_z:
+                drawingMode3 = OCCLUSIONS_NO_OCCLUSIONS;
+                break;
+
+            case SDLK_t:
+                drawingMode3 = MESH_TEXT_PLAIN_COL;
+                break;
+                
+            case SDLK_1:
+                drawingMode3 = DRAW_TRIANGLE_INTERPOLATED;
+                point0 = { mouse_position.x, mouse_position.y, 1 };
+                point1 = { mouse_position.x + 50, mouse_position.y + 70, 1 };
+                point2 = { mouse_position.x + 100, mouse_position.y + 10, 1 };
+                color1 = Color::RED;
+                color2 = Color::GREEN;
+                color3 = Color::BLUE;
+                break;
+
         }
 
     }
@@ -335,7 +424,8 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
 
 {
     bool Lab1 = false;
-    bool Lab2 = true;
+    bool Lab2 = false;
+    bool Lab3 = true;
 
     if (Lab1) {
         if (event.button == SDL_BUTTON_LEFT) {
@@ -380,6 +470,15 @@ void Application::OnMouseButtonDown(SDL_MouseButtonEvent event)
     }
 
     if (Lab2) {
+        if (event.button == SDL_BUTTON_RIGHT) {
+            my_camera->center.x = mouse_position.x;
+            my_camera->center.y = mouse_position.y;
+            my_camera->center.z = 0;
+            my_camera->UpdateViewMatrix();
+        }
+    }
+
+    if (Lab3) {
 
     }
 
@@ -422,7 +521,18 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 
 {
+    bool Lab1 = false;
+    bool Lab2 = false;
+    bool Lab3 = true;
 
+
+    if (Lab2) {
+        if (event.button == SDL_BUTTON_LEFT) {
+            my_camera->Orbit(-mouse_delta.x * 0.01, Vector3::UP);
+            my_camera->Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+        }
+
+    }
 
 
 }
@@ -434,6 +544,7 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 {
 
     float dy = event.preciseY;
+    my_camera->Zoom(dy < 0 ? 1.1 : 0.9);
 
 
 

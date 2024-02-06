@@ -706,12 +706,26 @@ void Image::DrawCircle(int x, int y, int r, const Color& borderColor, int border
 
 
 void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2, const Color& borderColor, bool isFilled, const Color& fillColor) {
-	std::vector<Vector2> vertices = { p0, p1, p2 };
+	//std::vector<Vector2> vertices = { p0, p1, p2 };
 	std::vector<Cell> AET;
 
 	AET.resize(height);
+    ScanLineDDA(p0.x, p0.y, p1.x, p1.y, AET);
+    ScanLineDDA(p1.x, p1.y, p2.x, p2.y, AET);
+    ScanLineDDA(p2.x, p2.y, p0.x, p0.y, AET);
+    
+    
+    
+    for(int i = 0; i<AET.size(); i++){
+        if(AET[i].minX < AET[i].maxX){
+            for(int j = AET[i].minX; j < AET[i].maxX; j++){
+                SetPixelSafe(j, i, fillColor);
+            }
+        }
+    }
+    
 
-	for (int i = 0; i < 3; ++i) {
+	/*for (int i = 0; i < 3; ++i) {
 		int j = (i + 1) % 3;
 		ScanLineDDA(vertices[i].x, vertices[i].y, vertices[j].x, vertices[j].y, AET);
 	}
@@ -725,11 +739,33 @@ void Image::DrawTriangle(const Vector2& p0, const Vector2& p1, const Vector2& p2
 				SetPixelSafe(x, y, fillColor);
 			}
 		}
-	}
+	}*/
 }
 
 void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table) {
-	float slope = (float)(y1 - y0) / (float)(x1 - x0);
+    
+    int dx = x1-x0;
+    int dy = y1-y0;
+    
+    int d = std::max(abs(dx), abs(dy));
+    
+    Vector2 v(dx/(float)d, dy/(float)d);
+    Vector2 A = Vector2(x0, y0);
+    
+    for(int i = 0; i<d; i++){
+        if(table[A.y].minX > A.x){
+            table[A.y].minX = A.x;
+        }
+        
+        if(table[A.y].maxX < A.x){
+            table[A.y].maxX = A.x;
+        }
+        
+        A = A+v;
+    }
+    
+    
+	/*float slope = (float)(y1 - y0) / (float)(x1 - x0);
 	if (x0 > x1) {
 		std::swap(x0, x1);
 		std::swap(y0, y1);
@@ -742,7 +778,7 @@ void Image::ScanLineDDA(int x0, int y0, int x1, int y1, std::vector<Cell>& table
 			cell.maxX = std::max(cell.maxX, x);
 		}
 		y = (int)(y0 + slope * (x - x0));
-	}
+	}*/
 }
 
 
@@ -768,6 +804,86 @@ void Image::DrawImage(const Image& image, int x, int y, bool top) {
 	}
 
 }
+
+void Image:: DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2){
+    
+    //method to draw mesh but interpolating 3 colors
+    //this method draws filled triangle but using barycentric interpolation between the colors of each vertex
+    //we have to pass a color per vertex --> we need to reuse the AET min-max iterations per cell and include weights for barycentric interpolation, once we have weights we can compute the final pixel color
+    //weight have to be between 0-1 and add up to 1, no weights can be negative!!!
+    
+    //we need to use the inverse of M to find the barycentric coordinates
+    
+    Matrix44 m;
+    m.M[0][0] = p0.x;
+    m.M[0][1] = p1.x;
+    m.M[0][2] = p2.x;
+    
+    m.M[1][0] = p0.y;
+    m.M[1][1] = p1.y;
+    m.M[1][2] = p2.y;
+    
+    m.M[2][0] = 1;
+    m.M[2][1] = 1;
+    m.M[2][2] = 1;
+    
+    m.Inverse();
+    
+    /*Vector3 bCoords0 = m*Vector3(p0.x, p0.y, 1);
+    Vector3 bCoords1 = m*Vector3(p1.x, p1.y, 1);
+    Vector3 bCoords2 = m*Vector3(p2.x, p2.y, 1);
+    
+    bCoords0.Clamp(0, 1);
+    float sum0 = bCoords0.x + bCoords0.y + bCoords0.z;
+    bCoords0 = bCoords0/sum0; //normalizing the barycentric coordinates
+    
+    bCoords1.Clamp(0, 1);
+    float sum1 = bCoords1.x + bCoords1.y + bCoords1.z;
+    bCoords1 = bCoords1/sum1;
+    
+    bCoords2.Clamp(0, 1);
+    float sum2 = bCoords2.x + bCoords2.y + bCoords2.z;
+    bCoords2 = bCoords2/sum2;*/
+    
+    /*if(bCoords0 <0 | bCoords1 <0 | bCoords2 <0){
+        std::cout<<"The point is ouside of the triangle!"<<std::endl;
+    }*/
+    
+    // Initialize the table for the current scanline
+    std::vector<Cell> table;
+    table.resize(height);
+
+    // Use ScanLineDDA to update the table with min and max x values
+    ScanLineDDA((int)p0.x, (int)p0.y, (int)p1.x, (int)p1.y, table);
+    ScanLineDDA((int)p1.x, (int)p1.y, (int)p2.x, (int)p2.y, table);
+    ScanLineDDA((int)p2.x, (int)p2.y, (int)p0.x, (int)p0.y, table);
+
+    // Iterate over the bounding box of the triangle
+    for (int y = 0; y < height; ++y) {
+        // Check if the current scanline is within the triangle
+        if (y >= table[y].minX && y <= table[y].maxX) {
+            // Iterate over the pixels in the bounding box and interpolate colors
+            for (int x = table[y].minX; x <= table[y].maxX; ++x) {
+                // Calculate barycentric weights for the pixel inside the triangle
+                Vector3 pixelBarycentricCoords = m * Vector3(x, y, 1);
+                pixelBarycentricCoords.Clamp(0, 1);
+                float sumPixel = pixelBarycentricCoords.x + pixelBarycentricCoords.y + pixelBarycentricCoords.z;
+                pixelBarycentricCoords = pixelBarycentricCoords / sumPixel;
+
+                // Check if the pixel is inside the triangle using barycentric coordinates
+                if (pixelBarycentricCoords.x >= 0 && pixelBarycentricCoords.y >= 0 && pixelBarycentricCoords.z >= 0) {
+                    // Interpolate color values using barycentric coordinates
+                    Color interpolatedColor = c0 * pixelBarycentricCoords.x + c1 * pixelBarycentricCoords.y + c2 * pixelBarycentricCoords.z;
+
+                    // Set the pixel color
+                    SetPixelSafe(x, y, interpolatedColor);
+                }
+            }
+        }
+    }
+
+}
+
 
 
 
