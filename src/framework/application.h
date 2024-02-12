@@ -127,6 +127,7 @@ public:
 
     };
     DrawingMode3 drawingMode3;
+    bool interpolated; 
 
 
     // Input

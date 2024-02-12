@@ -245,9 +245,8 @@ void Application::Update(float seconds_elapsed)
 
     }
     if (Lab3) {
-
         switch (drawingMode3) {
-
+           
         }
     }
 
@@ -301,8 +300,8 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
             //point0 = { mouse_position.x, mouse_position.y };
             //point1 = { mouse_position.x + 50, mouse_position.y + 70 };
             //point2 = { mouse_position.x + 100, mouse_position.y + 10 };
-            //lineColor = Color(rand() % 256, rand() % 256, rand() % 256);
-            //lineColor2 = Color(rand() % 256, rand() % 256, rand() % 256);
+            lineColor = Color(rand() % 256, rand() % 256, rand() % 256);
+            lineColor2 = Color(rand() % 256, rand() % 256, rand() % 256);
             break;
 
         case SDLK_5:
@@ -414,6 +413,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
                 break;
 
         }
+        
 
     }
 
@@ -526,7 +526,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
     bool Lab3 = true;
 
 
-    if (Lab2) {
+    if (Lab3) {
         if (event.button == SDL_BUTTON_LEFT) {
             my_camera->Orbit(-mouse_delta.x * 0.01, Vector3::UP);
             my_camera->Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);

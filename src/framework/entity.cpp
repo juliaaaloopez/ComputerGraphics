@@ -1,6 +1,6 @@
 #include "entity.h"
 
-void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
+void Entity::Render(Image* framebuffer, Camera* camera, const Color& c){
 
     std::vector<Vector3> vertices = mesh->GetVertices();
 
@@ -20,13 +20,18 @@ void Entity::Render(Image* framebuffer, Camera* camera, const Color& c) {
             p1.y = (p1.y + 1.0f) * 0.5f * framebuffer->height;
             p2.x = (p2.x + 1.0f) * 0.5f * framebuffer->width;
             p2.y = (p2.y + 1.0f) * 0.5f * framebuffer->height;
-            
-            Vector2 v0 = {p0.x, p0.y};
-            Vector2 v1 = {p1.x, p1.y};
-            Vector2 v2 = {p2.x, p2.y};
 
+            Vector3 v0 = {p0.x, p0.y, 1};
+            Vector3 v1 = {p1.x, p1.y, 1};
+            Vector3 v2 = {p2.x, p2.y, 1};
+            
+            Color color0 = Color::RED; // Determine color based on the vertex
+            Color color1 = Color::GREEN; // Determine color based on the vertex
+            Color color2 = Color::BLUE;
+
+            
             //For lab 3 we need to use the drawtriangle filled to render the mesh
-            framebuffer->DrawTriangle(v0, v1, v2, c, 1, c); //we render the mesh
+            framebuffer->DrawTriangleInterpolated(v0, v1, v2, color0, color1, color2); //we render the mesh
         }
 
     }
@@ -36,23 +41,23 @@ void Entity::Update(float seconds_elapsed, bool rotate, bool translate, bool sca
 
     if (rotate) {
         float angular_speed = 1.0f; // choose a speed in radians/second
-        Vector3 r (0.0f, 1.0f, 0.0f); // rotate around the y-axis
+        Vector3 r(0.0f, 1.0f, 0.0f); // rotate around the y-axis
         model.Rotate(angular_speed * seconds_elapsed, r);
 
     }
     else if (translate) {
         float translation_speed = 0.5f; // choose a speed in units/second
         float translation_distance = translation_speed * seconds_elapsed; //it will translate this distance over time
-       
-        Vector3 t (translation_distance, 0.0f, 0.0f); // translate in the x-axis
+
+        Vector3 t(translation_distance, 0.0f, 0.0f); // translate in the x-axis
         model.Translate(t.x, t.y, t.z);
-           
-   
+
+
     }
     else if (scale) {
         float scaleSpeed = 0.2f;  //chosen speed of the scalation
         Vector3 scale(1.1f, 1.2f, 0.8f); //scale vector
-    
+
         float scaleIncrement = scaleSpeed * seconds_elapsed; //scaling increment
 
         if (model.M[0][0] < scale.x) { //we increment the scaling until it reaches its target scale (scale vector defined)
