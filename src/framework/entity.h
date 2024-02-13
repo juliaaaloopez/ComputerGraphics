@@ -18,15 +18,15 @@ public:
 
     ~Entity() {};
 
-    void Render(Image* framebuffer, Camera* camera, const Color& c);
+    void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
     void Update(float seconds_elapsed, bool rotate, bool translate, bool scale);
 
-    enum class eRenderMode {
+    /*enum class eRenderMode {
         POINTCLOUD,
         WIREFRAME,
         TRIANGLES,
         TRIANGLES_INTERPOLATED
     };
-    eRenderMode mode;
+    eRenderMode mode;*/
 
 };

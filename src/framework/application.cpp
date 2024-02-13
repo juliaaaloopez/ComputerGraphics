@@ -34,6 +34,7 @@ void Application::Init(void) {
     borderWidth = 20;
     isFilled = false;
     bool Lab1 = false;
+    c = true;
     drawingMode = DRAW_NONE;
 
     //LAB 2
@@ -106,6 +107,11 @@ void Application::Init(void) {
         
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
+        
+        zBuffer = new FloatImage(window_width, window_height);
+        zBuffer->Fill(9999999);
+        
+        
     }
 }
 
@@ -175,13 +181,13 @@ void Application::Render(void) {
     if (Lab2) {
         switch (drawingMode2) {
         case DRAW_SINGLE_ENTITY:
-            entity1.Render(&framebuffer, my_camera, Color::RED);
+            //entity1.Render(&framebuffer, my_camera, zBuffer, 1);
             break;
 
         case DRAW_MULTIPLE_ANIMATED:
-            entity1.Render(&framebuffer, my_camera, Color::RED);
-            entity2.Render(&framebuffer, my_camera, Color::GREEN);
-            entity3.Render(&framebuffer, my_camera, Color::WHITE);
+            /*entity1.Render(&framebuffer, my_camera, zBuffer, 1);
+            entity2.Render(&framebuffer, my_camera, zBuffer, 1);
+            entity3.Render(&framebuffer, my_camera, zBuffer, 1);*/
             break;
 
         }
@@ -190,7 +196,9 @@ void Application::Render(void) {
     if (Lab3) {
         switch (drawingMode3) {
         case PLAIN_INTERPOLATED_COLOR:
-                entity1.Render(&framebuffer, my_camera, Color::GREEN);
+                entity1.Render(&framebuffer, my_camera, zBuffer);
+                
+    
             break;
 
         case OCCLUSIONS_NO_OCCLUSIONS:
@@ -199,9 +207,6 @@ void Application::Render(void) {
         case MESH_TEXT_PLAIN_COL:
             break;
                 
-        case DRAW_TRIANGLE_INTERPOLATED:
-                framebuffer.DrawTriangleInterpolated({200, 200, 1}, {400, 400, 1}, {600, 200, 1}, color1, color2, color3);
-            break;
                 
         }
 
@@ -246,7 +251,6 @@ void Application::Update(float seconds_elapsed)
     }
     if (Lab3) {
         switch (drawingMode3) {
-           
         }
     }
 
@@ -411,7 +415,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
                 color2 = Color::GREEN;
                 color3 = Color::BLUE;
                 break;
-
+                
         }
         
 

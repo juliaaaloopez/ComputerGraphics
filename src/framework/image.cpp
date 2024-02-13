@@ -745,7 +745,7 @@ void Image::DrawImage(const Image& image, int x, int y, bool top) {
 
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2) {
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
 
     //method to draw mesh but interpolating 3 colors
     //this method draws filled triangle but using barycentric interpolation between the colors of each vertex
@@ -754,7 +754,6 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
 
     //we need to use the inverse of M to find the barycentric coordinates
     
-
     Matrix44 m;
     m.M[0][0] = p0.x;
     m.M[1][0] = p1.x;
@@ -784,19 +783,25 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
                 Vector3 pixelBarycentricCoords = m * Vector3(x, y, 1);
                 pixelBarycentricCoords.Clamp(0, 1);
                 float sumPixel = pixelBarycentricCoords.x + pixelBarycentricCoords.y + pixelBarycentricCoords.z;
-                pixelBarycentricCoords = pixelBarycentricCoords / sumPixel;
-
+                if(sumPixel != 1){
+                    pixelBarycentricCoords.x = pixelBarycentricCoords.x / (sumPixel);
+                    pixelBarycentricCoords.y = pixelBarycentricCoords.y / (sumPixel);
+                    pixelBarycentricCoords.z = pixelBarycentricCoords.z / (sumPixel);
+                }
                 // we need to make sure that the pixel is inside the triangle
-                if (pixelBarycentricCoords.x >= 0 && pixelBarycentricCoords.y >= 0 && pixelBarycentricCoords.z >= 0) {
+                if(pixelBarycentricCoords.x >= 0 && pixelBarycentricCoords.y >= 0 && pixelBarycentricCoords.z >= 0){
                     float interpolatedZ = p0.z * pixelBarycentricCoords.x + p1.z * pixelBarycentricCoords.y + p2.z * pixelBarycentricCoords.z;
-                        Color interpolatedColor = c0 * pixelBarycentricCoords.x + c1 * pixelBarycentricCoords.y + c2 * pixelBarycentricCoords.z;
-
+                    Color interpolatedColor = c0 * pixelBarycentricCoords.x + c1 * pixelBarycentricCoords.y + c2 * pixelBarycentricCoords.z;
+                    if(interpolatedZ < zBuffer->GetPixel(x, y)){
                         SetPixelSafe(x, y, interpolatedColor);
+                        zBuffer->SetPixel(x, y, interpolatedZ);
                     }
                 }
             }
         }
     }
+}
+
 
 
 
@@ -830,7 +835,7 @@ FloatImage::FloatImage(unsigned int width, unsigned int height){
     this->width = width;
     this->height = height;
     pixels = new float[width * height];
-    memset(pixels, 999999, width * height * sizeof(float)); //we set the buffer to a big value
+    memset(pixels, 0, width * height * sizeof(float));
 
 }
 

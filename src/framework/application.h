@@ -127,7 +127,8 @@ public:
 
     };
     DrawingMode3 drawingMode3;
-    bool interpolated; 
+    bool c; 
+    FloatImage* zBuffer;
 
 
     // Input
