@@ -4,6 +4,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer){
 
     std::vector<Vector3> vertices = mesh->GetVertices();
     
+    
 
     for (int i = 0; i < vertices.size(); i += 3) {
         bool negZ0, negZ1, negZ2;
@@ -21,7 +22,7 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer){
             p1.y = (p1.y + 1.0f) * 0.5f * framebuffer->height;
             p2.x = (p2.x + 1.0f) * 0.5f * framebuffer->width;
             p2.y = (p2.y + 1.0f) * 0.5f * framebuffer->height;
-            
+ 
             Color color0 = Color::RED; // Determine color based on the vertex
             
             /*if(plain){
@@ -35,8 +36,14 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer){
                 Color color1 = Color::GREEN; // Determine color based on the vertex
                 Color color2 = Color::BLUE;
             
+            Vector2 uv0 = mesh->GetUVs()[i];
+            Vector2 uv1 = mesh->GetUVs()[i+1];
+            Vector2 uv2 = mesh->GetUVs()[i+2];
+            
+            
+            
                 //For lab 3 we need to use the drawtriangle filled to render the mesh
-                framebuffer->DrawTriangleInterpolated(p0, p1, p2, color0, color1, color2, zBuffer); //we render the mesh
+                framebuffer->DrawTriangleInterpolated(p0, p1, p2, color0, color1, color2, zBuffer, texture, uv0, uv1, uv2); 
             //}
         }
 

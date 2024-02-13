@@ -10,10 +10,12 @@ public:
 
     Mesh* mesh;
     Matrix44 model;
+    Image* texture;
 
     Entity() {
         this->mesh = new Mesh;
         this->model = Matrix44(); //Sets identity matrix
+        this->texture = new Image;  //we initialize the texture to a null pointer
     };
 
     ~Entity() {};

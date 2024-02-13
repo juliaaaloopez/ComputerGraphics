@@ -107,9 +107,13 @@ void Application::Init(void) {
         
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
-        
         zBuffer = new FloatImage(window_width, window_height);
-        zBuffer->Fill(9999999);
+        
+        
+        if(!entity1.texture->LoadTGA("textures/anna_color_specular.tga", true))
+            std::cout<<"Texture not found" << std::endl;
+        
+        
         
         
     }
@@ -196,9 +200,8 @@ void Application::Render(void) {
     if (Lab3) {
         switch (drawingMode3) {
         case PLAIN_INTERPOLATED_COLOR:
+                zBuffer->Fill(9999999); //we fill the z-buffer in the render of the application
                 entity1.Render(&framebuffer, my_camera, zBuffer);
-                
-    
             break;
 
         case OCCLUSIONS_NO_OCCLUSIONS:
@@ -534,6 +537,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
         if (event.button == SDL_BUTTON_LEFT) {
             my_camera->Orbit(-mouse_delta.x * 0.01, Vector3::UP);
             my_camera->Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
+            
         }
 
     }
@@ -549,7 +553,7 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 
     float dy = event.preciseY;
     my_camera->Zoom(dy < 0 ? 1.1 : 0.9);
-
+    
 
 
     // ...

@@ -745,7 +745,7 @@ void Image::DrawImage(const Image& image, int x, int y, bool top) {
 
 }
 
-void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer) {
+void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const Vector3& p2, const Color& c0, const Color& c1, const Color& c2, FloatImage* zBuffer, Image * texture, const Vector2& uv0, const Vector2& uv1, const Vector2& uv2) {
 
     //method to draw mesh but interpolating 3 colors
     //this method draws filled triangle but using barycentric interpolation between the colors of each vertex
@@ -783,18 +783,33 @@ void Image::DrawTriangleInterpolated(const Vector3& p0, const Vector3& p1, const
                 Vector3 pixelBarycentricCoords = m * Vector3(x, y, 1);
                 pixelBarycentricCoords.Clamp(0, 1);
                 float sumPixel = pixelBarycentricCoords.x + pixelBarycentricCoords.y + pixelBarycentricCoords.z;
-                if(sumPixel != 1){
-                    pixelBarycentricCoords.x = pixelBarycentricCoords.x / (sumPixel);
-                    pixelBarycentricCoords.y = pixelBarycentricCoords.y / (sumPixel);
-                    pixelBarycentricCoords.z = pixelBarycentricCoords.z / (sumPixel);
-                }
+                
+                pixelBarycentricCoords.x = pixelBarycentricCoords.x / (sumPixel);
+                pixelBarycentricCoords.y = pixelBarycentricCoords.y / (sumPixel);
+                pixelBarycentricCoords.z = pixelBarycentricCoords.z / (sumPixel);
+                
                 // we need to make sure that the pixel is inside the triangle
                 if(pixelBarycentricCoords.x >= 0 && pixelBarycentricCoords.y >= 0 && pixelBarycentricCoords.z >= 0){
                     float interpolatedZ = p0.z * pixelBarycentricCoords.x + p1.z * pixelBarycentricCoords.y + p2.z * pixelBarycentricCoords.z;
-                    Color interpolatedColor = c0 * pixelBarycentricCoords.x + c1 * pixelBarycentricCoords.y + c2 * pixelBarycentricCoords.z;
                     if(interpolatedZ < zBuffer->GetPixel(x, y)){
-                        SetPixelSafe(x, y, interpolatedColor);
                         zBuffer->SetPixel(x, y, interpolatedZ);
+                        if(texture == nullptr){ //if texture is nullptr (we do not want texture) we use colors
+                            Color interpolatedColor = c0 * pixelBarycentricCoords.x + c1 * pixelBarycentricCoords.y + c2 * pixelBarycentricCoords.z;
+                            SetPixelSafe(x, y, interpolatedColor);
+                        } else{
+                            float u = uv0.x * pixelBarycentricCoords.x + uv1.x * pixelBarycentricCoords.y + uv2.x * pixelBarycentricCoords.z;
+                            float v = uv0.y * pixelBarycentricCoords.x + uv1.y * pixelBarycentricCoords.y + uv2.y * pixelBarycentricCoords.z;
+                            //we use this clamp, because we clamp the coordinates separately
+                            u = clamp(u, 0, 1);
+                            v = clamp(v, 0, 1);
+                            
+                            //we transform to texture space
+                            u = u * (texture->width - 1); // u component has to go from 0 to W-1
+                            v = v * (texture->height - 1); // v component has to go from 0 to H-1
+                            
+                            Color textureColor = texture->GetPixelSafe(u, v); //we get the pixel from the texture
+                            SetPixelSafe(x, y, textureColor);
+                        }
                     }
                 }
             }
