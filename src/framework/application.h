@@ -50,11 +50,11 @@ public:
     Color lineColor2;
     Color color1;
     Color color2;
-    Color color3; 
+    Color color3;
 
-    Vector3 point0;
-    Vector3 point1;
-    Vector3 point2;
+    Vector2 point0;
+    Vector2 point1;
+    Vector2 point2;
 
     Color GetSelectedColor();
 
@@ -120,16 +120,19 @@ public:
 
     enum DrawingMode3 {
         DRAW_NO,
-        PLAIN_INTERPOLATED_COLOR,
-        OCCLUSIONS_NO_OCCLUSIONS,
-        MESH_TEXT_PLAIN_COL,
-        DRAW_TRIANGLE_INTERPOLATED
+        DRAW_TRIANGLE,
+        DRAW_ENTITY
 
     };
     DrawingMode3 drawingMode3;
-    bool c; 
     FloatImage* zBuffer;
-
+    bool isInterpolated;
+    bool isOcluded;
+    bool isTextured;
+    
+    Vector3 point3;
+    Vector3 point4;
+    Vector3 point5;
 
     // Input
     const Uint8* keystate;

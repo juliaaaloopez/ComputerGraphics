@@ -20,15 +20,7 @@ public:
 
     ~Entity() {};
 
-    void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer);
+    void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool isInterpolated, bool isOcluded, bool isTextured);
     void Update(float seconds_elapsed, bool rotate, bool translate, bool scale);
-
-    /*enum class eRenderMode {
-        POINTCLOUD,
-        WIREFRAME,
-        TRIANGLES,
-        TRIANGLES_INTERPOLATED
-    };
-    eRenderMode mode;*/
 
 };

@@ -34,7 +34,6 @@ void Application::Init(void) {
     borderWidth = 20;
     isFilled = false;
     bool Lab1 = false;
-    c = true;
     drawingMode = DRAW_NONE;
 
     //LAB 2
@@ -43,6 +42,9 @@ void Application::Init(void) {
 
     //LAB 3
     bool Lab3 = true;
+    isInterpolated = false;
+    isOcluded = false;
+    isTextured = false;
 
     if (Lab1) {
         std::cout << "Available Drawing Options:" << std::endl;
@@ -75,10 +77,10 @@ void Application::Init(void) {
     if (Lab2) {
         my_camera = new Camera();
         my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
-        my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
+        my_camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP); //construct the view matrix
 
         //define 3 new entities
-       
+
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
         entity1.model.Translate(0, 0.3, 0);
@@ -103,19 +105,15 @@ void Application::Init(void) {
     if (Lab3) {
         my_camera = new Camera();
         my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
-        my_camera->LookAt(Vector3(0,0.2,0.75),Vector3(0,0.2,0), Vector3::UP); //construct the view matrix
-        
+        my_camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP); //construct the view matrix
+
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
         zBuffer = new FloatImage(window_width, window_height);
-        
-        
-        if(!entity1.texture->LoadTGA("textures/anna_color_specular.tga", true))
-            std::cout<<"Texture not found" << std::endl;
-        
-        
-        
-        
+
+
+        if (!entity1.texture->LoadTGA("textures/lee_color_specular.tga", true))
+            std::cout << "Texture not found" << std::endl;
     }
 }
 
@@ -199,20 +197,44 @@ void Application::Render(void) {
     }
     if (Lab3) {
         switch (drawingMode3) {
-        case PLAIN_INTERPOLATED_COLOR:
-                zBuffer->Fill(9999999); //we fill the z-buffer in the render of the application
-                entity1.Render(&framebuffer, my_camera, zBuffer);
+
+        case DRAW_TRIANGLE:
+            if (!isInterpolated) {
+                framebuffer.DrawTriangleInterpolated(point3, point4, point5, color1, color1, color1, zBuffer, NULL, {0,0}, {0,0}, {0,0}, 0, 0, 0);
+            }
+            else if (isInterpolated) {
+                framebuffer.DrawTriangleInterpolated(point3, point4, point5, color1, color2, color3, zBuffer, NULL, {0,0}, {0,0}, {0,0}, 1, 1, 0); //we need to put 1 at isOcluded boolean for the triangle interpolated to work
+            }
             break;
 
-        case OCCLUSIONS_NO_OCCLUSIONS:
-            break;
 
-        case MESH_TEXT_PLAIN_COL:
+        case DRAW_ENTITY:
+            zBuffer->Fill(FLT_MAX); //we fill the z-buffer with a very large number
+            if (isInterpolated && !isTextured) {
+                if (isOcluded) {
+                    entity1.Render(&framebuffer, my_camera, zBuffer, true, true, false); //interpolated, ocluded, no textured
+                }
+                else {
+                    entity1.Render(&framebuffer, my_camera, zBuffer, true, false, false); //interpolated, not ocluded, no textured
+                }
+
+            }
+            else if(!isInterpolated && !isTextured){
+                entity1.Render(&framebuffer, my_camera, zBuffer, false, false, false); //plain
+            }
+
+            else if (isTextured && !isInterpolated) {
+                if (isOcluded) {
+                    entity1.Render(&framebuffer, my_camera, zBuffer, false, true, true); //plain, ocluded, textured
+                }
+                else {
+                    entity1.Render(&framebuffer, my_camera, zBuffer, false, false, true); //plain, not oculded, textured
+                }
+
+            }
+
             break;
-                
-                
         }
-
 
     }
 
@@ -304,9 +326,9 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         case SDLK_4:
             drawingMode = DRAW_TRIANGLES;
-            //point0 = { mouse_position.x, mouse_position.y };
-            //point1 = { mouse_position.x + 50, mouse_position.y + 70 };
-            //point2 = { mouse_position.x + 100, mouse_position.y + 10 };
+            point0 = { mouse_position.x, mouse_position.y };
+            point1 = { mouse_position.x + 50, mouse_position.y + 70 };
+            point2 = { mouse_position.x + 100, mouse_position.y + 10 };
             lineColor = Color(rand() % 256, rand() % 256, rand() % 256);
             lineColor2 = Color(rand() % 256, rand() % 256, rand() % 256);
             break;
@@ -348,12 +370,12 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         case SDLK_o:
             my_camera->type = Camera::ORTHOGRAPHIC;
-            my_camera->SetOrthographic(my_camera->left, my_camera->right,my_camera->top,my_camera->bottom,my_camera->near_plane,my_camera->far_plane);
+            my_camera->SetOrthographic(my_camera->left, my_camera->right, my_camera->top, my_camera->bottom, my_camera->near_plane, my_camera->far_plane);
             break;
 
         case SDLK_p:
             my_camera->type = Camera::PERSPECTIVE;
-            my_camera-> SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
+            my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             break;
 
         case SDLK_n:
@@ -370,22 +392,22 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         case SDLK_PLUS:
             if (current_property == NEAR_PLANE) {
-                my_camera->near_plane= my_camera->near_plane+10;
+                my_camera->near_plane = my_camera->near_plane + 10;
                 my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             }
             else if (current_property == FAR_PLANE) {
-                my_camera->far_plane = my_camera->far_plane+10;
+                my_camera->far_plane = my_camera->far_plane + 10;
                 my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             }
             break;
 
         case SDLK_MINUS:
             if (current_property == NEAR_PLANE) {
-                my_camera->near_plane = my_camera->near_plane-10;
+                my_camera->near_plane = my_camera->near_plane - 10;
                 my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             }
             else if (current_property == FAR_PLANE) {
-                my_camera->far_plane = my_camera->far_plane-10;
+                my_camera->far_plane = my_camera->far_plane - 10;
                 my_camera->SetPerspective(my_camera->fov, my_camera->aspect, my_camera->near_plane, my_camera->far_plane);
             }
             break;
@@ -395,33 +417,39 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
     if (Lab3) {
         switch (event.keysym.sym) {
-            case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+        case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
 
-            case SDLK_c:
-                drawingMode3 = PLAIN_INTERPOLATED_COLOR;
-                break;
+        case SDLK_c: //toggle between plain iterpolated
+            isInterpolated = !isInterpolated;
+            break;
 
-            case SDLK_z:
-                drawingMode3 = OCCLUSIONS_NO_OCCLUSIONS;
-                break;
+        case SDLK_z: //toggle between occlusions no occlusions
+            isOcluded = !isOcluded;
+            break;
 
-            case SDLK_t:
-                drawingMode3 = MESH_TEXT_PLAIN_COL;
-                break;
+        case SDLK_t: //toggle between texture plain
+            isTextured = !isTextured;
+            break;
+
+        
+        case SDLK_1: //triangle
+            drawingMode3 = DRAW_TRIANGLE;
                 
-            case SDLK_1:
-                drawingMode3 = DRAW_TRIANGLE_INTERPOLATED;
-                point0 = { mouse_position.x, mouse_position.y, 1 };
-                point1 = { mouse_position.x + 50, mouse_position.y + 70, 1 };
-                point2 = { mouse_position.x + 100, mouse_position.y + 10, 1 };
-                color1 = Color::RED;
-                color2 = Color::GREEN;
-                color3 = Color::BLUE;
-                break;
-                
+            color1 = Color::RED;
+            color2 = Color::GREEN;
+            color3 = Color::BLUE;
+
+            point3 = { mouse_position.x, mouse_position.y, 1 };
+            point4 = { mouse_position.x + 50, mouse_position.y + 70, 1 };
+            point5 = { mouse_position.x + 100, mouse_position.y + 10, 1 };
+
+            break;
+
+        case SDLK_2: //entity
+            drawingMode3 = DRAW_ENTITY;
+            break;
         }
         
-
     }
 
 }
@@ -537,7 +565,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
         if (event.button == SDL_BUTTON_LEFT) {
             my_camera->Orbit(-mouse_delta.x * 0.01, Vector3::UP);
             my_camera->Orbit(-mouse_delta.y * 0.01, Vector3::RIGHT);
-            
+
         }
 
     }
@@ -553,7 +581,7 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 
     float dy = event.preciseY;
     my_camera->Zoom(dy < 0 ? 1.1 : 0.9);
-    
+
 
 
     // ...
