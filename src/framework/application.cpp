@@ -30,7 +30,7 @@ Application::~Application() {
 void Application::Init(void) {
 
     std::cout << "Initiating app..." << std::endl;
-    //LAB 1
+    /*//LAB 1
     borderWidth = 20;
     isFilled = false;
     bool Lab1 = false;
@@ -114,21 +114,27 @@ void Application::Init(void) {
 
         if (!entity1.texture->LoadTGA("textures/lee_color_specular.tga", true))
             std::cout << "Texture not found" << std::endl;
-    }
+    }*/
+    
+    myQuad.CreateQuad(); //it creates two triangles
+    //vertices are initialized to range -1,1 because of the clip space
+    
+    myQuadShader = Shader::Get("shaders/quad.vs", "shaders/quad.fs"); //first one in vertex shader, second in fragment shader
+    
+    
 }
 
 
 // Render one frame
 
 void Application::Render(void) {
-
-    framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
-
     bool Lab1 = false;
     bool Lab2 = false;
-    bool Lab3 = true;
+    bool Lab3 = false;
+    bool Lab4 = true;
 
     if (Lab1) {
+     framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
         switch (drawingMode) {
         case DRAW_LINES:
             framebuffer.DrawLineDDA(x0, y0, x1, y1, lineColor);
@@ -178,9 +184,11 @@ void Application::Render(void) {
             break;
 
         }
+     framebuffer.Render();
     }
 
     if (Lab2) {
+     framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
         switch (drawingMode2) {
         case DRAW_SINGLE_ENTITY:
             //entity1.Render(&framebuffer, my_camera, zBuffer, 1);
@@ -193,9 +201,10 @@ void Application::Render(void) {
             break;
 
         }
-
+     framebuffer.Render();
     }
     if (Lab3) {
+     framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
         switch (drawingMode3) {
 
         case DRAW_TRIANGLE:
@@ -235,11 +244,19 @@ void Application::Render(void) {
 
             break;
         }
-
+     framebuffer.Render();
     }
 
-    framebuffer.Render();
-
+    if(Lab4){
+        
+        myQuadShader->Enable();
+        myQuadShader->SetFloat("u_time", time);  //goes to shader, search character and assing smth (in this case, time)
+        //we send our time to the CPU
+        myQuad.Render();
+        myQuadShader->Disable();
+        
+        
+    }
 }
 
 

@@ -8,6 +8,7 @@
 #include "particles.h"
 #include "button.h"
 #include "entity.h"
+#include "shader.h"
 
 
 
@@ -151,7 +152,21 @@ public:
     // CPU Global framebuffer
     Image framebuffer;
 
-
+    //LAB 4
+    Mesh myQuad;
+    Shader* myQuadShader;
+    
+    enum DrawingMode4{
+        DRAW_A,
+        DRAW_B,
+        DRAW_C,
+        DRAW_D,
+        DRAW_E,
+        DRAW_F
+    };
+    
+    DrawingMode4 drawingMode4;
+    
     // Constructor and main methods
     Application(const char* caption, int width, int height);
     ~Application();
