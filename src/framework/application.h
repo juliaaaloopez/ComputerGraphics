@@ -12,6 +12,7 @@
 
 
 
+
 class Application {
 
 public:
@@ -166,6 +167,7 @@ public:
     };
     
     DrawingMode4 drawingMode4;
+    Texture* texture; 
     
     // Constructor and main methods
     Application(const char* caption, int width, int height);

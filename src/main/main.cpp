@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {
 	// Launch the app (app is a global variable)
-	Application* app = new Application( "Computer Graphics",700, 700);
+	Application* app = new Application( "Computer Graphics",800, 500);
 	app->Init();
 
 	std::cout << "Starting loop..." << std::endl;

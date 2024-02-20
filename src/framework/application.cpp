@@ -118,8 +118,10 @@ void Application::Init(void) {
     
     myQuad.CreateQuad(); //it creates two triangles
     //vertices are initialized to range -1,1 because of the clip space
+    texture = Texture::Get("../res/images/fruits.png"); //we get the texture
     
     myQuadShader = Shader::Get("shaders/quad.vs", "shaders/quad.fs"); //first one in vertex shader, second in fragment shader
+    
     
     
 }
@@ -252,7 +254,13 @@ void Application::Render(void) {
         myQuadShader->Enable();
         myQuadShader->SetFloat("u_time", time);  //goes to shader, search character and assing smth (in this case, time)
         //we send our time to the CPU
-        myQuad.Render();
+        if(texture != nullptr){
+            myQuadShader->SetTexture("u_texture", texture);
+            myQuad.Render();
+        }else{
+            std::cout<<"Failed to load texture"<<std::endl;
+        }
+        
         myQuadShader->Disable();
         
         
