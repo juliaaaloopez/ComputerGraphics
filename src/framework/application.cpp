@@ -30,7 +30,7 @@ Application::~Application() {
 void Application::Init(void) {
 
     std::cout << "Initiating app..." << std::endl;
-    /*//LAB 1
+    //LAB 1
     borderWidth = 20;
     isFilled = false;
     bool Lab1 = false;
@@ -41,10 +41,13 @@ void Application::Init(void) {
     bool Lab2 = false;
 
     //LAB 3
-    bool Lab3 = true;
+    bool Lab3 = false;
     isInterpolated = false;
     isOcluded = false;
     isTextured = false;
+    
+    //LAB 4
+    bool Lab4 = true;
 
     if (Lab1) {
         std::cout << "Available Drawing Options:" << std::endl;
@@ -112,18 +115,33 @@ void Application::Init(void) {
         zBuffer = new FloatImage(window_width, window_height);
 
 
-        if (!entity1.texture->LoadTGA("textures/lee_color_specular.tga", true))
-            std::cout << "Texture not found" << std::endl;
-    }*/
-    
-    myQuad.CreateQuad(); //it creates two triangles
-    //vertices are initialized to range -1,1 because of the clip space
-    texture = Texture::Get("../res/images/fruits.png"); //we get the texture
-    
-    myQuadShader = Shader::Get("shaders/quad.vs", "shaders/quad.fs"); //first one in vertex shader, second in fragment shader
-    
-    
-    
+        //if (!entity1.texture->LoadTGA("textures/lee_color_specular.tga", true))
+            //std::cout << "Texture not found" << std::endl;
+    }
+    if(Lab4){
+        
+        /*myQuad.CreateQuad(); //it creates two triangles
+        //vertices are initialized to range -1,1 because of the clip space
+        texture = Texture::Get("../res/images/fruits.png"); //we get the texture
+        
+        myQuadShader = Shader::Get("shaders/quad.vs", "shaders/quad.fs"); //first one in vertex shader, second in fragment shader*/
+        
+        my_camera = new Camera();
+        my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
+        my_camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP); //construct the view matrix
+        
+        
+        if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
+            std::cout << "Model not found" << std::endl;
+        //zBuffer = new FloatImage(window_width, window_height);
+
+
+        entity1.texture = Texture::Get(".../res/textures/lee_color_specular.tga");
+        
+        entity1.shader->Get("shaders/raster.vs", "shaders/raster.fs");
+        
+        
+    }
 }
 
 
@@ -223,23 +241,23 @@ void Application::Render(void) {
             zBuffer->Fill(FLT_MAX); //we fill the z-buffer with a very large number
             if (isInterpolated && !isTextured) {
                 if (isOcluded) {
-                    entity1.Render(&framebuffer, my_camera, zBuffer, true, true, false); //interpolated, ocluded, no textured
+                   // entity1.Render(&framebuffer, my_camera, zBuffer, true, true, false); //interpolated, ocluded, no textured
                 }
                 else {
-                    entity1.Render(&framebuffer, my_camera, zBuffer, true, false, false); //interpolated, not ocluded, no textured
+                    //entity1.Render(&framebuffer, my_camera, zBuffer, true, false, false); //interpolated, not ocluded, no textured
                 }
 
             }
             else if(!isInterpolated && !isTextured){
-                entity1.Render(&framebuffer, my_camera, zBuffer, false, false, false); //plain
+                //entity1.Render(&framebuffer, my_camera, zBuffer, false, false, false); //plain
             }
 
             else if (isTextured && !isInterpolated) {
                 if (isOcluded) {
-                    entity1.Render(&framebuffer, my_camera, zBuffer, false, true, true); //plain, ocluded, textured
+                    //entity1.Render(&framebuffer, my_camera, zBuffer, false, true, true); //plain, ocluded, textured
                 }
                 else {
-                    entity1.Render(&framebuffer, my_camera, zBuffer, false, false, true); //plain, not oculded, textured
+                    //entity1.Render(&framebuffer, my_camera, zBuffer, false, false, true); //plain, not oculded, textured
                 }
 
             }
@@ -251,7 +269,7 @@ void Application::Render(void) {
 
     if(Lab4){
         
-        myQuadShader->Enable();
+        /*myQuadShader->Enable();
         myQuadShader->SetFloat("u_time", time);  //goes to shader, search character and assing smth (in this case, time)
         //we send our time to the CPU
         if(texture != nullptr){
@@ -261,7 +279,9 @@ void Application::Render(void) {
             std::cout<<"Failed to load texture"<<std::endl;
         }
         
-        myQuadShader->Disable();
+        myQuadShader->Disable();*/
+        
+        entity1.Render(my_camera);
         
         
     }

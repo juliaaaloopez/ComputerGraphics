@@ -1,6 +1,6 @@
 #include "entity.h"
 
-void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool isInterpolated, bool isOcluded, bool isTextured) {
+/*void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool isInterpolated, bool isOcluded, bool isTextured) {
 
     std::vector<Vector3> vertices = mesh->GetVertices();
 
@@ -54,6 +54,20 @@ void Entity::Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, boo
             }
         }
     }
+}*/
+
+void Entity::Render(Camera* camera){
+    shader->Enable(); 
+    
+    shader->SetMatrix44("u_model", model); 
+    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    
+    if(texture != nullptr){
+        shader->SetTexture("u_texture", texture);
+    }
+    
+    mesh->Render(GL_TRIANGLES);
+    shader->Disable(); 
 }
 
 
