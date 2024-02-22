@@ -13,9 +13,8 @@ void main()
     //with sinus we change the instensity of one of the colors
     //we overlap the two colors by adding 1.0-v_uv.x
     
-    /*
-     //B
-    vec2 center = vec2(0.5); //we will define our center (of rectangle)
+    //B
+    /*vec2 center = vec2(0.5); //we will define our center (of rectangle)
     float dist_ = distance(center, v_uv);
     vec3 final_color = vec3(dist_);
     gl_FragColor = vec4(final_color, 0.0);*/
@@ -28,23 +27,58 @@ void main()
     gl_FragColor = vec4(red, 0.0, blue, 1.0);*/
     
     //D
+    // Map UV coordinates to screen space
+    /*vec2 screenUV = v_uv * 2.0 - 1.0;
+
+    // Get a noise value based on screen position
+    float noiseValue = noise1(vec3(screenUV * 5.0, 0.0));
+
+    // Quantize the noise value to create a pixelated effect
+    float pixelSize = 0.1; // Adjust this value to control pixel size
+    float quantizedNoise = floor(noiseValue / pixelSize + 0.5) * pixelSize;
+
+    // Color degradation effect from blue to red
+    vec3 degradationColor = vec3(v_uv.x, 0.0, 1.0 - v_uv.x);
+
+    // Combine degradation effect with pixelation
+    vec3 color = mix(vec3(0.0, 1.0, 0.0), degradationColor, quantizedNoise);
+
+    // Render the color
+    gl_FragColor = vec4(color, 1.0);*/
     
-    /*vec2 uv = v_uv * 16.0;
-    float red = smoothstep(0.5, 0.75, uv.x) * smoothstep(0.5, 0.75, uv.y);
-    float green = 1.0 - smoothstep(0.5, 0.75, uv.x) * smoothstep(0.5, 0.75, uv.y);
-    float blue = 0.0;
-    float alpha = 0.0;
-    vec3 color = vec3(red, green, blue);
-    float diagonal = 1.0 + (uv.x + uv.y);
-    gl_FragColor = vec4(diagonal * 0.045, 1.0 - (diagonal * 0.045), 0.0, 1.0);*/
     
     //E
-    /*vec2 uv = v_uv * 16.0; //number of squares in row/column
-    bool black = mod(floor(uv.x) + floor(uv.y), 2.0) < 1.0; //check if even or odd
-    gl_FragColor = black ? vec4(0.0, 0.0, 0.0, 1.0) : vec4(1.0, 1.0, 1.0, 1.0);*/
-    //do this with step
+    /*vec2 uv = v_uv * 16.0; // number of squares. In this case we want 16 x 16 squares.
+    float black = step(0.5, mod(floor(uv.x) + floor(uv.y), 2.0)); //we use the step function to calculate whether the square is black or white.
+    gl_FragColor = vec4(vec3(1.0 - black), 1.0);*/
     
     //F
+    // Define the center of the screen in UV coordinates
+     vec2 center = vec2(0.5, 0.5);
+
+     // Define the wave parameters
+     float frequency = 10.0; // Adjust as needed
+     float amplitude = 0.1; // Adjust as needed
+
+     // Calculate the wave profile using a sine function
+     float wave = sin((v_uv.x - center.x) * frequency) * amplitude + center.y;
+
+     // Create the wave silhouette
+     float silhouette = smoothstep(wave - 0.02, wave + 0.02, v_uv.y);
+
+     // Calculate the gradient factor based on the distance from the top and bottom of the screen
+     float gradientFactor = smoothstep(0.0, 0.5, min(abs(v_uv.y - center.y), abs(1.0 - v_uv.y - center.y)));
+
+     // Interpolate between black and green based on the gradient factor
+     vec4 gradientColor = mix(vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 0.0, 0.0, 1.0), gradientFactor);
+
+     // Interpolate between the gradient color and dark green based on the silhouette
+     vec4 finalColor = mix(gradientColor, vec4(0.0, 1.0-v_uv.y, 0.0, 1.0), silhouette); //rgb
+
+     // Output the final color with full opacity
+     gl_FragColor = finalColor;
+    
+    
     
     
     //3.2
@@ -82,12 +116,23 @@ void main()
     gl_FragColor = mix(texture_color, vec4(0.0, 0.0, 0.0, 1.0), vignette); //mix between texture color, black and the size of the vignette as a factor*/
     
     //F2
-    /*float noise_x = noise1(v_uv.x + u_time*0.1);
-    float noise_y = noise1(v_uv.y + u_time*0.1);
+    /*float blurRadius = 0.005; // Change this value based on your preference
+
+    vec3 blurredColor = vec3(0.0);
+    float samples = 8.0;
+
+    for(float i = -samples/2.0; i <= samples/2.0; i++){
+        for(float j = -samples/2.0; j <= samples/2.0; j++){
+            float offset = blurRadius * i;
+            vec2 offsetCoord = v_uv + vec2(offset, blurRadius * j);
+            blurredColor += vec3(texture2D(u_texture, offsetCoord));
+        }
+    }
+
+    blurredColor /= float(samples * samples);
+    gl_FragColor = vec4(blurredColor, texture_color[3]);*/
+
     
-    vec2 distorted = v_uv + vec2(noise_x, noise_y)*0.1;
-    vec4 distorted_col = texture2D(u_texture, distorted);
-    gl_FragColor = distorted_col;*/
     
     //3.3 ROTATION
     /*vec2 center = vec2(0.5);
