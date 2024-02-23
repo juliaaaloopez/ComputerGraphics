@@ -10,7 +10,7 @@ uniform sampler2D u_texture;
 void main()
 {
 	// Set the ouput color per pixel
-	vec3 color = normalize(v_world_normal);
+    vec4 texture_color = texture2D(u_texture, v_uv);
 
-	gl_FragColor = vec4( color, 1.0 );
+    gl_FragColor = texture_color;
 }

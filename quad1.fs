@@ -32,8 +32,8 @@ void main()
     }
     
     if(u_subtask == 4.0){
-        float rows = floor(v_uv.x * 30.0)/30.0;
-        float cols = floor(v_uv.y * 30.0)/30.0;
+        float rows = floor(v_uv.x * 20.0)/20.0;
+        float cols = floor(v_uv.y * 20.0)/20.0;
         gl_FragColor = vec4(rows, cols, 0.0, 0.0);
     }
     
@@ -45,30 +45,12 @@ void main()
     }
     
     if(u_subtask == 6.0){
-        // Define the center of the screen in UV coordinates
         vec2 center = vec2(0.5, 0.5);
-        
-        // Define the wave parameters
-        float frequency = 10.0; // Adjust as needed
-        float amplitude = 0.1; // Adjust as needed
-        
-        // Calculate the wave profile using a sine function
-        float wave = sin((v_uv.x - center.x) * frequency) * amplitude + center.y;
-        
-        // Create the wave silhouette
-        float silhouette = smoothstep(wave - 0.02, wave + 0.02, v_uv.y);
-        
-        // Calculate the gradient factor based on the distance from the top and bottom of the screen
-        float gradientFactor = smoothstep(0.0, 0.5, min(abs(v_uv.y - center.y), abs(1.0 - v_uv.y - center.y)));
-        
-        // Interpolate between black and green based on the gradient factor
-        vec4 gradientColor = mix(vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 0.0, 0.0, 1.0), gradientFactor);
-        
-        // Interpolate between the gradient color and dark green based on the silhouette
-        vec4 finalColor = mix(gradientColor, vec4(0.0, 1.0-v_uv.y, 0.0, 1.0), silhouette); //rgb
-        
-        // Output the final color with full opacity
-        gl_FragColor = finalColor;
+        float wave = -sin((v_uv.x - center.x) * 6.0) * 0.3 + center.y;
+        float silhouette = smoothstep(wave, wave, v_uv.y);
+        float gradientFactor = smoothstep(0.0, 0.5, center.y - v_uv.y);
+        vec4 finalColor = mix(mix(vec4(0.0, 1.0, 0.0, 1.0), vec4(0.0, 0.0, 0.0, 1.0), gradientFactor), vec4(0.0, 1.0 - v_uv.y, 0.0, 1.0), 1.0 - silhouette);
+        gl_FragColor = finalColor; 
     }
     
 }
