@@ -120,13 +120,18 @@ void Application::Init(void) {
     }
     if(Lab4){
         
-        /*myQuad.CreateQuad(); //it creates two triangles
+        myQuad.CreateQuad(); //it creates two triangles
         //vertices are initialized to range -1,1 because of the clip space
+        
+        myQuadShader1 = Shader::Get("shaders/quad1.vs", "shaders/quad1.fs"); //first one in vertex shader, second in fragment shader
+        
+        myQuadShader2 = Shader::Get("shaders/quad2.vs", "shaders/quad2.fs");
         texture = Texture::Get("../res/images/fruits.png"); //we get the texture
         
-        myQuadShader = Shader::Get("shaders/quad.vs", "shaders/quad.fs"); //first one in vertex shader, second in fragment shader*/
+        myQuadShader3 = Shader::Get("shaders/quad3.vs", "shaders/quad3.fs");
         
-        my_camera = new Camera();
+        
+        /*my_camera = new Camera();
         my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
         my_camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP); //construct the view matrix
         
@@ -138,7 +143,7 @@ void Application::Init(void) {
 
         entity1.texture = Texture::Get(".../res/textures/lee_color_specular.tga");
         
-        entity1.shader->Get("shaders/raster.vs", "shaders/raster.fs");
+        entity1.shader->Get("shaders/raster.vs", "shaders/raster.fs");*/
         
         
     }
@@ -268,20 +273,28 @@ void Application::Render(void) {
     }
 
     if(Lab4){
-        
-        /*myQuadShader->Enable();
-        myQuadShader->SetFloat("u_time", time);  //goes to shader, search character and assing smth (in this case, time)
-        //we send our time to the CPU
-        if(texture != nullptr){
-            myQuadShader->SetTexture("u_texture", texture);
+        switch (drawingMode4) {
+            case TASK_1:
+            //goes to shader, search character and assing smth (in this case, time)
+            //we send our time to the CPU
+            myQuadShader1->Enable();
             myQuad.Render();
-        }else{
-            std::cout<<"Failed to load texture"<<std::endl;
+            break;
+            
+            case TASK_2:
+            myQuadShader2->Enable();
+            myQuad.Render();
+            
+            break;
+                
         }
+       
+      
+        //entity1.Render(my_camera);
+    
         
-        myQuadShader->Disable();*/
+    
         
-        entity1.Render(my_camera);
         
         
     }
@@ -333,7 +346,8 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 {
     bool Lab1 = false;
     bool Lab2 = false;
-    bool Lab3 = true;
+    bool Lab3 = false;
+    bool Lab4 = true;
 
     // KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 
@@ -493,6 +507,105 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
         case SDLK_2: //entity
             drawingMode3 = DRAW_ENTITY;
             break;
+        }
+        
+    }
+    if (Lab4){
+        switch (event.keysym.sym) {
+            case SDLK_ESCAPE: exit(0); break; // ESC key, kill the app
+            case SDLK_1:
+                drawingMode4 = TASK_1;
+                subtask = 0.0;
+                myQuadShader1->SetFloat("u_time", time);
+                myQuadShader1->SetFloat("u_subtask", subtask);
+                myQuadShader1->Disable();
+                break;
+            case SDLK_2:
+                drawingMode4 = TASK_2;
+                subtask = 0.0;
+                myQuadShader2->SetFloat("u_time", time);
+                myQuadShader2->SetFloat("u_subtask", subtask);
+                //myQuadShader2->SetTexture("u_texture", texture);
+                myQuadShader2->Disable();
+                break;
+            case SDLK_3:
+                drawingMode4 = TASK_3;
+                subtask = 0.0;
+                myQuadShader3->SetFloat("u_time", time);
+                myQuadShader3->SetFloat("u_subtask", subtask);
+                myQuadShader3->Disable();
+                break;
+            case SDLK_4:
+                drawingMode4 = TASK_4;
+                break;
+            case SDLK_a:
+                subtask = 1.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            case SDLK_b:
+                subtask = 2.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            case SDLK_c:
+                subtask = 3.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            case SDLK_d:
+                subtask = 4.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            case SDLK_e:
+                subtask = 5.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            case SDLK_f:
+                subtask = 6.0;
+                if(drawingMode4 == TASK_1){
+                    myQuadShader1->Enable();
+                    myQuadShader1->SetFloat("u_subtask", subtask);
+                }
+                if(drawingMode4 == TASK_2){
+                    myQuadShader2->Enable();
+                    myQuadShader2->SetFloat("u_subtask", subtask);
+                }
+                break;
+            
+            
         }
         
     }

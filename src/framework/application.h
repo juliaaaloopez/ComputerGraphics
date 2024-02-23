@@ -155,19 +155,20 @@ public:
 
     //LAB 4
     Mesh myQuad;
-    Shader* myQuadShader;
+    Shader* myQuadShader1;
+    Shader* myQuadShader2;
+    Shader* myQuadShader3;
     
     enum DrawingMode4{
-        DRAW_A,
-        DRAW_B,
-        DRAW_C,
-        DRAW_D,
-        DRAW_E,
-        DRAW_F
+        TASK_1,
+        TASK_2,
+        TASK_3,
+        TASK_4
     };
     
     DrawingMode4 drawingMode4;
-    Texture* texture; 
+    Texture* texture;
+    float subtask;
     
     // Constructor and main methods
     Application(const char* caption, int width, int height);
