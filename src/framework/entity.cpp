@@ -1,11 +1,12 @@
 #include "entity.h"
 
-void Entity::Render(Camera* camera){
+void Entity::Render(sUniformData uniformData){
     
     shader->Enable();
     
     shader->SetMatrix44("u_model", model); 
-    shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+    uniformData.model = model;
+    shader->SetMatrix44("u_viewprojection", uniformData.viewprojection_matrix);
     
     if(texture != nullptr){
         shader->SetTexture("u_texture", texture);

@@ -4,6 +4,8 @@
 #include "mesh.h"
 #include "image.h"
 #include "shader.h"
+#include "material.h"
+
 
 class Entity {
 
@@ -25,7 +27,7 @@ public:
     ~Entity() {};
 
     //void Render(Image* framebuffer, Camera* camera, FloatImage* zBuffer, bool isInterpolated, bool isOcluded, bool isTextured);
-    void Render(Camera* camera); 
+    void Render(sUniformData uniformData);
     void Update(float seconds_elapsed, bool rotate, bool translate, bool scale);
 
 };

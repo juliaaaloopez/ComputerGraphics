@@ -9,6 +9,7 @@
 #include "button.h"
 #include "entity.h"
 #include "shader.h"
+#include "material.h"
 
 
 
@@ -169,6 +170,10 @@ public:
     DrawingMode4 drawingMode4;
     Texture* texture;
     float subtask;
+    
+    //LAB 5
+    Material::sUniformData uniformData;
+    Vector3 ambient_light;
     
     // Constructor and main methods
     Application(const char* caption, int width, int height);

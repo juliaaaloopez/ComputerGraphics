@@ -288,7 +288,8 @@ void Application::Render(void) {
                 
         case TASK_4:
             glEnable(GL_DEPTH_TEST); //for occlusions
-            entity1.Render(my_camera);
+                uniformData.viewprojection_matrix = my_camera.viewprojection_matrix;
+            entity1.Render(uniformData);
             glDisable(GL_DEPTH_TEST);
             break;
            
