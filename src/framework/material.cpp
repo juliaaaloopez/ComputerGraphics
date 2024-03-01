@@ -2,9 +2,11 @@
 
 void Material::Enable(const sUniformData& uniformData){
     shader->Enable();
-    shader->SetUniform3("u_Ka", Ka);
-    shader->SetUniform3("u_Kd", Kd);
-    shader->SetUniform3("u_Ks", Ks);
+    
+    //Material
+    shader->SetVector3("u_Ka", Ka);
+    shader->SetVector3("u_Kd", Kd);
+    shader->SetVector3("u_Ks", Ks);
     shader->SetFloat("u_a", a);
     if(texture_normal != nullptr){
         shader->SetTexture("u_texture_normal", texture_normal);
@@ -12,6 +14,15 @@ void Material::Enable(const sUniformData& uniformData){
     if(texture_color != nullptr){
         shader->SetTexture("u_texture_color", texture_color);
     }
+    
+    shader->SetMatrix44("u_model", uniformData.model);
+    shader->SetMatrix44("u_viewprojection", uniformData.viewprojection_matrix);
+    shader->SetVector3("u_camera_position", uniformData.camera_position); 
+    
+    shader->SetVector3("u_ambientLight", uniformData.ambient_light);
+    shader->SetVector2("u_lightPosition", uniformData.light.position);
+    shader->SetVector3("u_diffuseIntensity", uniformData.light.diffuse_intensity);
+    shader->SetVector3("u_specularIntensity", uniformData.light.specular_intensity);
 }
 
 void Material::Disable(){

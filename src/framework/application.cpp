@@ -43,7 +43,10 @@ void Application::Init(void) {
     isTextured = false;
 
     //LAB 4
-    bool Lab4 = true;
+    bool Lab4 = false;
+    
+    //LAB 5
+    bool Lab5 = true;
     
 
     if (Lab1) {
@@ -137,8 +140,23 @@ void Application::Init(void) {
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
 
-        entity1.texture = Texture::Get("textures/lee_color_specular.tga");
-        entity1.shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+        //entity1.material->texture_color = Texture::Get("textures/lee_color_specular.tga");
+        //entity1.material->shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+    }
+    if(Lab5){
+        my_camera = new Camera();
+        my_camera->SetPerspective(85, window_width / (float)window_height, 0.01, 100); //85 degrees, aspect ratio, near and far plane
+        my_camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP); //construct the view matrix
+
+
+        if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
+            std::cout << "Model not found" << std::endl;
+
+        //entity1.material->shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+        entity1.material->shader = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+        entity1.material->texture_color = Texture::Get("textures/lee_color_specular.tga");
+        
+        
     }
 }
 
@@ -149,7 +167,8 @@ void Application::Render(void) {
     bool Lab1 = false;
     bool Lab2 = false;
     bool Lab3 = false;
-    bool Lab4 = true;
+    bool Lab4 = false;
+    bool Lab5 = true;
 
     if (Lab1) {
         framebuffer.Fill(Color::BLACK); // by default the background of the framebuffer is black
@@ -288,12 +307,32 @@ void Application::Render(void) {
                 
         case TASK_4:
             glEnable(GL_DEPTH_TEST); //for occlusions
-                uniformData.viewprojection_matrix = my_camera.viewprojection_matrix;
+            uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
+            uniformData.camera_position = my_camera->eye; 
+            uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
+            uniformData.light.position= Vector2(0.0, 10.0);
+            uniformData.light.diffuse_intensity= Vector3(1.0, 1.0, 1.0);
+            uniformData.light.specular_intensity= Vector3(1.0, 1.0, 1.0);
             entity1.Render(uniformData);
             glDisable(GL_DEPTH_TEST);
             break;
            
         }
+    }
+    if(Lab5){
+        glEnable(GL_DEPTH_TEST); //for occlusions
+        uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
+        uniformData.camera_position = my_camera->eye;
+        uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
+        uniformData.light.position= Vector2(1.0, 1.0);
+        uniformData.light.diffuse_intensity= Vector3(1.0, 1.0, 1.0);
+        uniformData.light.specular_intensity= Vector3(1.0, 1.0, 1.0);
+        entity1.material->Ka = Vector3(1.0, 0.5, 0.31);
+        entity1.material->Kd = Vector3(1.0, 0.5, 0.31);
+        entity1.material->Ks = Vector3(0.5, 0.5, 0.5);
+        entity1.material->a = float(5.0);
+        entity1.Render(uniformData);
+        glDisable(GL_DEPTH_TEST);
     }
 }
 
@@ -306,7 +345,7 @@ void Application::Update(float seconds_elapsed)
     bool Lab1 = false;
     bool Lab2 = false;
     bool Lab3 = false;
-    bool Lab4 = true;
+    bool Lab4 = false;
 
     if (Lab1) {
         switch (drawingMode) {
@@ -376,7 +415,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
     bool Lab1 = false;
     bool Lab2 = false;
     bool Lab3 = false;
-    bool Lab4 = true;
+    bool Lab4 = false;
 
     // KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 

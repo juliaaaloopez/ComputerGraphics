@@ -1,19 +1,11 @@
 #include "entity.h"
 
-void Entity::Render(sUniformData uniformData){
+void Entity::Render(Material::sUniformData uniformData){
     
-    shader->Enable();
-    
-    shader->SetMatrix44("u_model", model); 
     uniformData.model = model;
-    shader->SetMatrix44("u_viewprojection", uniformData.viewprojection_matrix);
-    
-    if(texture != nullptr){
-        shader->SetTexture("u_texture", texture);
-    }
-    
+    material->Enable(uniformData);
     mesh->Render(GL_TRIANGLES);
-    shader->Disable();
+    material->Disable();
 }
 
 

@@ -25,9 +25,6 @@ public:
 
     ~Material() {};
     
-    void Enable();
-    void Disable();
-    
     struct sLight {
         Vector2 position;
         Vector3 diffuse_intensity;
@@ -37,11 +34,16 @@ public:
     struct sUniformData{ //only sLight and others, not material
         Matrix44 model;
         Matrix44 viewprojection_matrix;
+        Vector3 camera_position; 
         Vector3 ambient_light;
-        Vector2 position;
-        Vector3 diffuse_intensity;
-        Vector3 specular_intensity;
+        sLight light;
     };
+    
+    sUniformData* uniformData;
+    
+    void Enable(const sUniformData& uniformData);
+    void Disable();
+
 
 };
 
