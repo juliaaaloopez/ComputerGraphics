@@ -154,6 +154,7 @@ void Application::Init(void) {
 
         //entity1.material->shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
         entity1.material->shader = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+        entity1.material->texture_normal = Texture::Get("textures/lee_normal.tga");
         entity1.material->texture_color = Texture::Get("textures/lee_color_specular.tga");
         
         
@@ -310,9 +311,9 @@ void Application::Render(void) {
             uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
             uniformData.camera_position = my_camera->eye; 
             uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
-            uniformData.light.position= Vector2(0.0, 10.0);
+            /*uniformData.light.position= Vector2(0.0, 10.0);
             uniformData.light.diffuse_intensity= Vector3(1.0, 1.0, 1.0);
-            uniformData.light.specular_intensity= Vector3(1.0, 1.0, 1.0);
+            uniformData.light.specular_intensity= Vector3(1.0, 1.0, 1.0);*/
             entity1.Render(uniformData);
             glDisable(GL_DEPTH_TEST);
             break;
@@ -324,13 +325,24 @@ void Application::Render(void) {
         uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
         uniformData.camera_position = my_camera->eye;
         uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
-        uniformData.light.position= Vector2(1.0, 1.0);
-        uniformData.light.diffuse_intensity= Vector3(1.0, 1.0, 1.0);
-        uniformData.light.specular_intensity= Vector3(1.0, 1.0, 1.0);
+        
+        Material:: sLight light1, light2;
+        light1.position= Vector2(1.0, 1.0);
+        light1.diffuse_intensity= Vector3(0.0, 1.0, 0.0);
+        light1.specular_intensity= Vector3(0.0, 1.0, 0.0);
+        
+        light2.position= Vector2(-1.0, 1.0);
+        light2.diffuse_intensity= Vector3(1.0, 0.0, 0.0);
+        light2.specular_intensity= Vector3(1.0, 0.0, 0.0);
+        
+        uniformData.lights.push_back(light1);
+        uniformData.lights.push_back(light2);
+        
         entity1.material->Ka = Vector3(1.0, 0.5, 0.31);
         entity1.material->Kd = Vector3(1.0, 0.5, 0.31);
         entity1.material->Ks = Vector3(0.5, 0.5, 0.5);
         entity1.material->a = float(5.0);
+        
         entity1.Render(uniformData);
         glDisable(GL_DEPTH_TEST);
     }

@@ -3,16 +3,6 @@ uniform mat4 u_model;
 uniform mat4 u_viewprojection;
 uniform vec3 u_camera_position;
 
-uniform vec3 u_Ka;
-uniform vec3 u_Ks;
-uniform vec3 u_Kd;
-uniform float u_a;
-
-uniform vec2 u_lightPosition;
-uniform vec3 u_diffuseIntensity;
-uniform vec3 u_specularIntensity;
-uniform vec3 u_ambientLight;
-
 // Variables to pass to the fragment shader
 varying vec2 v_uv;
 varying vec3 v_world_position;

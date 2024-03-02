@@ -36,12 +36,12 @@ public:
         Matrix44 viewprojection_matrix;
         Vector3 camera_position; 
         Vector3 ambient_light;
-        sLight light;
+        std::vector<sLight> lights;
     };
     
     sUniformData* uniformData;
     
-    void Enable(const sUniformData& uniformData);
+    void Enable(const sUniformData& uniformData, int light_index);
     void Disable();
 
 

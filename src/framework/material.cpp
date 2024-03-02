@@ -1,6 +1,6 @@
 #include "material.h"
 
-void Material::Enable(const sUniformData& uniformData){
+void Material::Enable(const sUniformData& uniformData, int light_index){
     shader->Enable();
     
     //Material
@@ -18,11 +18,11 @@ void Material::Enable(const sUniformData& uniformData){
     shader->SetMatrix44("u_model", uniformData.model);
     shader->SetMatrix44("u_viewprojection", uniformData.viewprojection_matrix);
     shader->SetVector3("u_camera_position", uniformData.camera_position); 
-    
     shader->SetVector3("u_ambientLight", uniformData.ambient_light);
-    shader->SetVector2("u_lightPosition", uniformData.light.position);
-    shader->SetVector3("u_diffuseIntensity", uniformData.light.diffuse_intensity);
-    shader->SetVector3("u_specularIntensity", uniformData.light.specular_intensity);
+    
+    shader->SetVector2("u_lightPosition", uniformData.lights[light_index].position);
+    shader->SetVector3("u_diffuseIntensity", uniformData.lights[light_index].diffuse_intensity);
+    shader->SetVector3("u_specularIntensity", uniformData.lights[light_index].specular_intensity);
 }
 
 void Material::Disable(){
