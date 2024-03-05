@@ -175,6 +175,13 @@ public:
     Material::sUniformData uniformData;
     Vector3 ambient_light;
     
+    enum DrawingMode5{
+        GOURAUD,
+        PHONG
+    };
+    
+    DrawingMode5 drawingMode5;
+    Vector3 texture_flag;
     // Constructor and main methods
     Application(const char* caption, int width, int height);
     ~Application();

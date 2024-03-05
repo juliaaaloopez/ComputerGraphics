@@ -21,18 +21,30 @@ varying vec3 v_world_normal;
 // pass our texture in uniform type (Image)
 uniform sampler2D u_texture_normal;
 uniform sampler2D u_texture_color;
+uniform vec3 u_texture_flag;
 
 void main()
 {
 	// Set the ouput color per pixel
-    vec4 texture_color = texture2D(u_texture_color, v_uv);
-    vec3 diffuse_color = texture_color.rgb;
     
-    vec3 texture_normal = texture2D(u_texture_normal, v_uv).rgb;
-    vec3 normal_map = normalize(texture_normal * 2.0 - 1.0);
-
-    float mix_factor = 0.5;
-    vec3 final_normal = mix(v_world_normal, normal_map, mix_factor);
+   
+    if(u_texture_flag.r == 1.0){
+        vec4 texture_color = texture2D(u_texture_color, v_uv);
+        vec3 diffuse_color = texture_color.rgb;
+    }
+    
+    if(u_texture_flag.g == 1.0){
+        vec4 texture_normal = texture2D(u_texture_normal, v_uv);
+        vec3 diffuse_color = texture_normal.rgb;
+    }
+    
+    if(u_texture_flag.b == 1.0){
+        vec4 texture_normal = texture2D(u_texture_normal, v_uv);
+        vec3 diffuse_color = texture_normal.rgb;
+        vec3 normal_map = normalize(texture_normal * 2.0 - 1.0);
+        float mix_factor = 0.5;
+        vec3 final_normal = mix(v_world_normal, normal_map, mix_factor);
+    }
     
     //diffuse reflection
     vec3 L = normalize(vec3(u_lightPosition, 1.0) - v_world_position.xyz); //distance from vertex to light source

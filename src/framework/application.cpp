@@ -151,11 +151,18 @@ void Application::Init(void) {
 
         if (!entity1.mesh->LoadOBJ("meshes/lee.obj"))
             std::cout << "Model not found" << std::endl;
+        
+        if(!entity2.mesh->LoadOBJ("meshes/lee.obj"))
+            std::cout <<"Model not found" <<std::endl;
 
-        //entity1.material->shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
-        entity1.material->shader = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+        entity1.material->shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
         entity1.material->texture_normal = Texture::Get("textures/lee_normal.tga");
         entity1.material->texture_color = Texture::Get("textures/lee_color_specular.tga");
+        
+        /*entity2.material->shader = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+        entity2.material->texture_normal = Texture::Get("textures/lee_normal.tga");
+        entity2.material->texture_color = Texture::Get("textures/lee_color_specular.tga");
+        texture_flag = (1,1,1);*/
         
         
     }
@@ -321,30 +328,59 @@ void Application::Render(void) {
         }
     }
     if(Lab5){
-        glEnable(GL_DEPTH_TEST); //for occlusions
-        uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
-        uniformData.camera_position = my_camera->eye;
-        uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
-        
-        Material:: sLight light1, light2;
-        light1.position= Vector2(1.0, 1.0);
-        light1.diffuse_intensity= Vector3(0.0, 1.0, 0.0);
-        light1.specular_intensity= Vector3(0.0, 1.0, 0.0);
-        
-        light2.position= Vector2(-1.0, 1.0);
-        light2.diffuse_intensity= Vector3(1.0, 0.0, 0.0);
-        light2.specular_intensity= Vector3(1.0, 0.0, 0.0);
-        
-        uniformData.lights.push_back(light1);
-        uniformData.lights.push_back(light2);
-        
-        entity1.material->Ka = Vector3(1.0, 0.5, 0.31);
-        entity1.material->Kd = Vector3(1.0, 0.5, 0.31);
-        entity1.material->Ks = Vector3(0.5, 0.5, 0.5);
-        entity1.material->a = float(5.0);
-        
-        entity1.Render(uniformData);
-        glDisable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        switch (drawingMode5){
+            case GOURAUD:
+                glEnable(GL_DEPTH_TEST); //for occlusions
+                uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
+                uniformData.camera_position = my_camera->eye;
+                uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
+            
+                Material:: sLight light1;
+                light1.position= Vector2(1.0, 1.0);
+                light1.diffuse_intensity= Vector3(1.0, 1.0, 1.0);
+                light1.specular_intensity= Vector3(1.0, 1.0, 1.0);
+                
+                uniformData.lights.clear();
+                uniformData.lights.push_back(light1);
+                
+                entity1.material->Ka = Vector3(1.0, 0.5, 0.31);
+                entity1.material->Kd = Vector3(1.0, 0.5, 0.31);
+                entity1.material->Ks = Vector3(0.5, 0.5, 0.5);
+                entity1.material->a = float(5.0);
+           
+                entity1.Render(uniformData);
+                glDisable(GL_DEPTH_TEST);
+                break;
+            
+            /*case PHONG:
+                glEnable(GL_DEPTH_TEST); //for occlusions
+                uniformData.viewprojection_matrix = my_camera->viewprojection_matrix;
+                uniformData.camera_position = my_camera->eye;
+                uniformData.ambient_light= Vector3(0.2, 0.2, 0.2);
+                
+                Material:: sLight light1, light2;
+                light1.position= Vector2(1.0, 2.0);
+                light1.diffuse_intensity= Vector3(0.0, 1.0, 0.0);
+                light1.specular_intensity= Vector3(0.0, 1.0, 0.0);
+                
+                light2.position= Vector2(-1.0, 2.0);
+                light2.diffuse_intensity= Vector3(1.0, 0.0, 0.0);
+                light2.specular_intensity= Vector3(1.0, 0.0, 0.0);
+                
+                uniformData.lights.clear();
+                uniformData.lights.push_back(light1);
+                uniformData.lights.push_back(light2);
+                
+                entity2.material->Ka = Vector3(1.0, 0.5, 0.31);
+                entity2.material->Kd = Vector3(1.0, 0.5, 0.31);
+                entity2.material->Ks = Vector3(0.5, 0.5, 0.5);
+                entity2.material->a = float(5.0);
+                
+                entity2.Render(uniformData);
+                glDisable(GL_DEPTH_TEST);
+                break;*/
+        }
     }
 }
 
@@ -358,6 +394,7 @@ void Application::Update(float seconds_elapsed)
     bool Lab2 = false;
     bool Lab3 = false;
     bool Lab4 = false;
+    bool Lab5 = true;
 
     if (Lab1) {
         switch (drawingMode) {
@@ -428,6 +465,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
     bool Lab2 = false;
     bool Lab3 = false;
     bool Lab4 = false;
+    bool Lab5 = true;
 
     // KEY CODES: https://wiki.libsdl.org/SDL2/SDL_Keycode
 
@@ -714,6 +752,62 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
         }
 
+    }
+    if (Lab5){
+        switch(event.keysym.sym){
+            case SDLK_ESCAPE: exit(0); break;
+            case SDLK_g:
+                drawingMode5 = GOURAUD;
+                break;
+            case SDLK_p:
+                drawingMode5 = PHONG; 
+                entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                break;
+            case SDLK_c:
+                if(drawingMode5 == PHONG){
+                    if(texture_flag.x == 1.0){
+                        texture_flag.x = 0.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                    else if(texture_flag.x == 0.0){
+                        texture_flag.x = 1.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                }
+                
+                break;
+            case SDLK_s:
+                if(drawingMode5 == PHONG){
+                    if(texture_flag.y == 1.0){
+                        texture_flag.y = 0.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                    else if(texture_flag.y == 0.0){
+                        texture_flag.y = 1.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                }
+
+                break;
+            case SDLK_n:
+                if(drawingMode5 == PHONG){
+                    if(texture_flag.z == 1.0){
+                        texture_flag.z = 0.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                    else if(texture_flag.z == 0.0){
+                        texture_flag.z = 1.0;
+                        entity2.material->shader->SetVector3("u_texture_flag", texture_flag);
+                    }
+                }
+                
+                break;
+            case SDLK_1:
+                
+                break;
+            case SDLK_2:
+                break; 
+        }
     }
 
 }

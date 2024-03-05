@@ -3,17 +3,21 @@
 void Entity::Render(Material::sUniformData uniformData){
     glDepthFunc(GL_LEQUAL);
     uniformData.model = model;
-    for(int i=0;  i<uniformData.lights.size(); i++){
-        glDisable(GL_BLEND);
+    int light_index = uniformData.lights.size();
+    int i=0;
+    while(i<light_index){
+        if(i>0){
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE);
+        } else{
+            glDisable(GL_BLEND);
+        }
         material->Enable(uniformData, i);
         mesh->Render(GL_TRIANGLES);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-        material->Enable(uniformData, i);
-        mesh->Render(GL_TRIANGLES);
-        material->Disable();
+        i++; 
     }
-    material->Disable();
+    material->Disable(); 
+    glDisable(GL_BLEND);
 }
 
 
